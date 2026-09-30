@@ -8,7 +8,8 @@
     "scheme": "lexiconmobile",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.apoluthor.lexicon-mobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +26,7 @@
     },
     "plugins": [
       "expo-router",
+      "./plugins/withSceneLifecycle",
       [
         "expo-splash-screen",
         {
