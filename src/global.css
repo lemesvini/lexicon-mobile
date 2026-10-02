@@ -1,3 +1,81 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Mirrors lexicon-web/src/index.css. The web defines these in oklch; React
+   Native can't parse oklch, so they're stored as sRGB channels ("r g b") to
+   keep opacity modifiers like bg-primary/50 working. Keep src/theme/colors.ts
+   in sync when changing a value here. */
+:root {
+  --background: 246 240 235;
+  --foreground: 14 20 18;
+  --card: 252 248 245;
+  --card-foreground: 14 20 18;
+  --popover: 255 255 255;
+  --popover-foreground: 14 20 18;
+  --primary: 20 53 42;
+  --primary-foreground: 255 255 255;
+  /* Same in both schemes, so the dark block doesn't override it. */
+  --primary-text: 241 236 228;
+  --secondary: 233 230 220;
+  --secondary-foreground: 20 53 42;
+  --muted: 237 233 222;
+  --muted-foreground: 86 108 99;
+  --accent: 200 235 219;
+  --accent-foreground: 20 53 42;
+  --destructive: 127 29 29;
+  --destructive-foreground: 255 255 255;
+  --border: 219 217 210;
+  --input: 180 178 167;
+  --ring: 97 180 149;
+  --chart-1: 20 53 42;
+  --chart-2: 97 180 149;
+  --chart-3: 42 106 84;
+  --chart-4: 125 196 168;
+  --chart-5: 68 138 115;
+  --sidebar: 247 243 238;
+  --sidebar-foreground: 14 20 18;
+  --sidebar-primary: 20 53 42;
+  --sidebar-primary-foreground: 255 255 255;
+  --sidebar-accent: 200 235 219;
+  --sidebar-accent-foreground: 20 53 42;
+  --sidebar-border: 219 217 210;
+  --sidebar-ring: 97 180 149;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 14 20 18;
+    --foreground: 241 236 228;
+    --card: 20 27 24;
+    --card-foreground: 241 236 228;
+    --popover: 20 27 24;
+    --popover-foreground: 241 236 228;
+    --primary: 97 180 149;
+    --primary-foreground: 14 20 18;
+    --secondary: 20 53 42;
+    --secondary-foreground: 241 236 228;
+    --muted: 26 37 34;
+    --muted-foreground: 138 171 160;
+    --accent: 20 53 42;
+    --accent-foreground: 241 236 228;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+    --border: 26 37 34;
+    --input: 39 48 45;
+    --ring: 97 180 149;
+    --chart-1: 97 180 149;
+    --chart-2: 20 53 42;
+    --chart-3: 58 157 123;
+    --chart-4: 13 36 28;
+    --chart-5: 140 199 178;
+    --sidebar: 20 27 24;
+    --sidebar-foreground: 241 236 228;
+    --sidebar-primary: 97 180 149;
+    --sidebar-primary-foreground: 14 20 18;
+    --sidebar-accent: 20 53 42;
+    --sidebar-accent-foreground: 241 236 228;
+    --sidebar-border: 26 37 34;
+    --sidebar-ring: 97 180 149;
+  }
+}

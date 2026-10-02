@@ -6,20 +6,24 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     slug: "lexicon-app",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/images/icon.png",
+    icon: "./assets/images/app-icon-light.png",
     scheme: "lexiconmobile",
     userInterfaceStyle: "automatic",
     ios: {
-        icon: "./assets/expo.icon",
+        icon: {
+            light: "./assets/images/app-icon-light.png",
+            dark: "./assets/images/app-icon-dark.png",
+        },
         bundleIdentifier: "com.lexiconenglish.app",
     },
     android: {
         package: "com.lexiconenglish.app",
+        // The foreground is the splash wordmark on a transparent canvas, sized
+        // to stay inside the round mask; the background matches app-icon-light.
         adaptiveIcon: {
-            backgroundColor: "#E6F4FE",
+            backgroundColor: "#DFF2EA",
             foregroundImage: "./assets/images/android-icon-foreground.png",
-            backgroundImage: "./assets/images/android-icon-background.png",
-            monochromeImage: "./assets/images/android-icon-monochrome.png",
+            monochromeImage: "./assets/images/android-icon-foreground.png",
         },
         predictiveBackGestureEnabled: false,
     },
@@ -59,13 +63,23 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                 ],
             },
         }],
+        "expo-sqlite",
         "./plugins/withSceneLifecycle",
         [
             "expo-splash-screen",
             {
-                backgroundColor: "#208AEF",
-                image: "./assets/images/splash-icon.png",
-                imageWidth: 76,
+                // The `background` token from src/global.css, in each scheme.
+                image: "./assets/images/lexicon-splash.png",
+                backgroundColor: "#F6F0EB",
+                dark: {
+                    image: "./assets/images/lexicon-splash.png",
+                    backgroundColor: "#0E1412",
+                },
+                resizeMode: "contain",
+                // Android 12+ masks the splash icon to a 192dp circle, so the
+                // wordmark stays narrow enough for its corners to fit there.
+                imageWidth: 120,
+                ios: { imageWidth: 160 },
             },
         ],
     ],
