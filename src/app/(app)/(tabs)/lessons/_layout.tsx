@@ -6,10 +6,9 @@ export default function LessonsLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Lessons",
-          headerLargeTitle: true,
-          headerLargeTitleStyle: { fontFamily: "Caprasimo" },
-          headerTitleStyle: { fontFamily: "Caprasimo" },
+          // No title: the header only carries the module and stats menus.
+          // `headerShown: false` would hide those too.
+          title: "",
         }} />
     </Stack>
   );

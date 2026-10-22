@@ -13,8 +13,14 @@ export default function TabsLayout() {
         <NativeTabs.Trigger.Icon sf="sun.horizon" md="wb_twilight" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="lessons">
-        <NativeTabs.Trigger.Label >Lessons</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="book.pages" md="auto_stories" />
+        <NativeTabs.Trigger.Label>Path</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{
+            default: "point.bottomleft.forward.to.point.topright.scurvepath",
+            selected: "point.bottomleft.forward.to.point.topright.scurvepath.fill",
+          }}
+          md="route"
+        />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="homework">
         <NativeTabs.Trigger.Label>Homework</NativeTabs.Trigger.Label>

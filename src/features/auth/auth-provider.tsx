@@ -2,37 +2,11 @@ import { createContext, use, useEffect, useState } from "react";
 import type { AuthError, Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/lib/supabase";
-import {
-  type AccessCheck,
-  checkAccess,
-  clearAccessCache,
-  type Student,
-} from "@/features/auth/student-access";
-
-/**
- * - `loading`: the stored session hasn't been read yet (the splash is still up).
- * - `signed-out`: no session, or one whose access check is still running or
- *   came back denied. The sign-in screen stays up through the check.
- * - `signed-in`: the root layout's `Stack.Protected` opens the app.
- */
-export type AuthStatus = "loading" | "signed-out" | "signed-in";
-
-type AuthState = {
-  status: AuthStatus;
-  session: Session | null;
-  /** The roster row, once the access check has come back. */
-  student: Student | null;
-  /** First word of the student's name, or "" if it isn't known. */
-  firstName: string;
-  /** Set by the teacher panel's Edge Functions when they issue a temporary
-   *  password; cleared by the change-password screen. */
-  mustChangePassword: boolean;
-  /** Why the last session was ended, shown on the sign-in screen. */
-  notice: string | null;
-  /** Resolves with an error message, or null once the student is let in. */
-  signIn: (email: string, password: string) => Promise<string | null>;
-  signOut: () => Promise<void>;
-};
+import { checkAccess, clearAccessCache } from "@/features/auth/student-access";
+import type { AccessCheck } from "@/features/auth/types/access-check";
+import type { AccessSetters } from "@/features/auth/types/access-setters";
+import type { AuthState } from "@/features/auth/types/auth-state";
+import type { AuthStatus } from "@/features/auth/types/auth-status";
 
 const AuthContext = createContext<AuthState | null>(null);
 
@@ -63,12 +37,7 @@ async function endSession() {
   clearAccessCache();
 }
 
-type Setters = {
-  setAccess: (access: { userId: string; check: AccessCheck }) => void;
-  setNotice: (notice: string | null) => void;
-};
-
-async function verifyAccess(userId: string, { setAccess, setNotice }: Setters) {
+async function verifyAccess(userId: string, { setAccess, setNotice }: AccessSetters) {
   const check = await checkAccess(userId);
   setAccess({ userId, check });
   if (check.kind === "denied") {

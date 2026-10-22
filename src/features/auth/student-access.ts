@@ -2,20 +2,8 @@
 // Mirrors lexicon-web/src/lib/student-access.ts: RLS already limits `students`
 // to the caller's own row, so there is nothing to filter here.
 
+import type { AccessCheck } from "@/features/auth/types/access-check";
 import { supabase } from "@/lib/supabase";
-
-export type Student = {
-  fullName: string;
-  email: string;
-  moduleName: string | null;
-};
-
-export type AccessCheck =
-  | { kind: "allowed"; student: Student }
-  /** No roster row — a teacher or admin account — or a deactivated student. */
-  | { kind: "denied"; reason: "not-student" | "inactive" }
-  /** The request failed (offline, timeout). Not cached, so it's retried. */
-  | { kind: "unknown" };
 
 const cache = new Map<string, Promise<AccessCheck>>();
 
