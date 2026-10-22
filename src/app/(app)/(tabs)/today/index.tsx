@@ -5,6 +5,7 @@ import { cssInterop } from "nativewind";
 import CurrentLessonCard from "@/features/today/components/current-lesson";
 
 import { colors } from "@/theme/colors";
+import { useUnreadCount } from "@/features/notifications/data/use-unread-count";
 import MyWeek from "@/features/today/components/my-week";
 import { useToday } from "@/features/today/data/use-today";
 
@@ -15,29 +16,21 @@ cssInterop(Check, {
 export default function TodayScreen() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const { state, refreshing, refresh } = useToday();
+  const unread = useUnreadCount();
 
   return (
     <>
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
-          icon={"dpad.fill"}
-          onPress={() => { }}
+          accessibilityLabel="Notificações"
+          onPress={() => router.push("/today/notifications")}
           tintColor={colors[scheme].primary}
-        />
-        <Stack.Toolbar.Button
-          icon={"bell.fill"}
-          onPress={() => { }}
-          tintColor={colors[scheme].primary}
-        />
-       
-      </Stack.Toolbar>
-      <Stack.Toolbar placement="left">
-         <Stack.Toolbar.Button
-          icon={"person.fill"}
-          onPress={() => router.push("/profile")}
-          tintColor={colors[scheme].primary}
-          separateBackground
-        />
+        >
+          <Stack.Toolbar.Icon sf="bell.fill" />
+          {unread > 0 ? (
+            <Stack.Toolbar.Badge>{unread > 9 ? "9+" : String(unread)}</Stack.Toolbar.Badge>
+          ) : null}
+        </Stack.Toolbar.Button>
       </Stack.Toolbar>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
@@ -46,7 +39,11 @@ export default function TodayScreen() {
         <View className="p-4 items-center gap-6">
           {state.status === "ready" ? (
             <>
-              <CurrentLessonCard lesson={state.data.next} hasPlan={state.data.hasPlan} />
+              <CurrentLessonCard
+                lesson={state.data.next}
+                progress={state.data.nextProgress}
+                hasPlan={state.data.hasPlan}
+              />
               <MyWeek week={state.data.week} />
             </>
           ) : state.status === "error" ? (

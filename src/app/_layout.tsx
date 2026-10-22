@@ -7,10 +7,12 @@ import { useColorScheme } from "react-native";
 import { AuthProvider, useAuth } from "@/features/auth/auth-provider";
 import { PasswordGate } from "@/features/auth/password-gate";
 import { SplashController } from "@/features/auth/splash-controller";
+import { configureNotifications } from "@/features/notifications/setup";
 import { navigationThemes } from "@/theme/colors";
 
 // Held until the stored session has been read; SplashController hides it.
 SplashScreen.preventAutoHideAsync();
+configureNotifications();
 
 export default function RootLayout() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";

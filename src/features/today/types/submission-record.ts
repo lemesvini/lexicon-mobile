@@ -4,4 +4,6 @@ export type SubmissionRecord = {
   status: string | null;
   answers: Record<string, unknown> | null;
   score: number | null;
+  /** When the teacher graded it; null until then. */
+  graded_at: string | null;
 };

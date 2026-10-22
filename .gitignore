@@ -30,6 +30,9 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# Firebase service account keys — uploaded to EAS, never committed
+*firebase-adminsdk*.json
+
 # local env files
 .env*.local
 

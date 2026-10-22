@@ -6,19 +6,20 @@ import { useColorScheme } from "react-native";
 import { colors } from "@/theme/colors";
 
 type Props = {
-  /** Attendance in the selected module, 0–100. */
-  attendance: number;
+  /** Attendance in the student's group, 0–100, or null before they have been
+   *  marked at all. */
+  attendance: number | null;
 };
 
 /** The header button with the student's attendance, opening a menu of their
- *  stats. The star stands in for the medal it will become.
+ *  stats.
  *
  *  A SwiftUI menu rather than `Stack.Toolbar.Menu`: a native header button
  *  shows its icon OR its text, never both side by side. */
 export default function StatsMenu({ attendance }: Props) {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const tint = colors[scheme].primary;
-  const percent = Math.round(attendance);
+  const percent = attendance === null ? null : Math.round(attendance);
 
   return (
     <Stack.Toolbar placement="right">
@@ -28,20 +29,25 @@ export default function StatsMenu({ attendance }: Props) {
           <Menu
             label={
               <HStack spacing={6}>
-                <Image systemName="star.fill" size={15} color={tint} />
+                <Image systemName="calendar.badge.checkmark" size={15} color={tint} />
                 <Text
                   modifiers={[
                     font({ family: "Montserrat", size: 16, weight: "semibold" }),
                     foregroundStyle(tint),
                   ]}
                 >
-                  {`${percent}%`}
+                  {percent === null ? "—" : `${percent}%`}
                 </Text>
               </HStack>
             }
           >
             <Section title="Suas estatísticas">
-              <Button label={`Frequência: ${percent}%`} systemImage="calendar.badge.checkmark" />
+              <Button
+                label={
+                  percent === null ? "Frequência: sem aulas registradas" : `Frequência: ${percent}%`
+                }
+                systemImage="calendar.badge.checkmark"
+              />
             </Section>
           </Menu>
         </Host>

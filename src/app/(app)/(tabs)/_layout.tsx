@@ -22,13 +22,13 @@ export default function TabsLayout() {
           md="route"
         />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="homework">
-        <NativeTabs.Trigger.Label>Homework</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="checklist" md="checklist" />
-      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="practice">
         <NativeTabs.Trigger.Label>Practice</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="square.and.pencil" md="edit_square" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="me">
+        <NativeTabs.Trigger.Label>Me</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "person", selected: "person.fill" }} md="person" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );

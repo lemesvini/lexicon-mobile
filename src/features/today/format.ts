@@ -18,7 +18,16 @@ export function formatDay(key: string, today = new Date()): string {
   return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} ${MONTHS[date.getMonth()]}`;
 }
 
-const LONG_WEEKDAYS = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+/** The day inside a sentence: "hoje", "amanhã", "na qui, 1 out" — or "no sáb",
+ *  "no dom", the two days that are masculine. */
+export function formatOnDay(key: string, today = new Date()): string {
+  const short = formatDay(key, today);
+  if (short === "Hoje" || short === "Amanhã") return short.toLowerCase();
+  const weekday = fromDateKey(key).getDay();
+  return `${weekday === 0 || weekday === 6 ? "no" : "na"} ${short.toLowerCase()}`;
+}
+
+const LONG_WEEKDAYS =["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 const LONG_MONTHS = [
   "janeiro", "fevereiro", "março", "abril", "maio", "junho",
   "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
@@ -36,6 +45,12 @@ export function formatLongDay(key: string, today = new Date()): string {
   if (short === "Hoje" || short === "Amanhã") return short;
   const date = fromDateKey(key);
   return `${LONG_WEEKDAYS[date.getDay()]}, ${date.getDate()} de ${LONG_MONTHS[date.getMonth()]}`;
+}
+
+/** "can", "can e could", "can, could e would". */
+export function formatList(items: readonly string[]): string {
+  if (items.length <= 1) return items[0] ?? "";
+  return `${items.slice(0, -1).join(", ")} e ${items[items.length - 1]}`;
 }
 
 /** "28 set – 4 out". */

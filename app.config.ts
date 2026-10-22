@@ -4,6 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ...config,
     name: "Lexicon",
     slug: "lexicon-app",
+    owner: "lemesvini",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/app-icon-light.png",
@@ -15,9 +16,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             dark: "./assets/images/app-icon-dark.png",
         },
         bundleIdentifier: "com.lexiconenglish.app",
+        config: { usesNonExemptEncryption: false },
+
     },
     android: {
         package: "com.lexiconenglish.app",
+        // FCM, which delivers push notifications on Android.
+        googleServicesFile: "./google-services.json",
         // The foreground is the splash wordmark on a transparent canvas, sized
         // to stay inside the round mask; the background matches app-icon-light.
         adaptiveIcon: {
@@ -64,6 +69,22 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             },
         }],
         "expo-sqlite",
+        // Practice › Speaking: the student says each card out loud and the
+        // device's own recognizer checks it.
+        ["expo-speech-recognition", {
+            microphonePermission:
+                "O Lexicon usa o microfone para ouvir você falar em inglês nas práticas de speaking.",
+            speechRecognitionPermission:
+                "O Lexicon usa o reconhecimento de fala para conferir o que você disse nas práticas de speaking.",
+            androidSpeechServicePackages: ["com.google.android.googlequicksearchbox"],
+        }],
+        // Push and the daily practice reminder. Android draws the small icon
+        // from its alpha alone, so the transparent wordmark comes out as a
+        // white silhouette, tinted with the brand green in the shade.
+        ["expo-notifications", {
+            icon: "./assets/images/android-icon-foreground.png",
+            color: "#61b495",
+        }],
         "./plugins/withSceneLifecycle",
         [
             "expo-splash-screen",
@@ -86,5 +107,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     experiments: {
         typedRoutes: true,
         reactCompiler: true,
+    },
+    extra: {
+        ...config.extra,
+        eas: {
+            projectId: "2bcf0228-85e6-41ed-ab69-b58c862b80d9",
+        },
     },
 });

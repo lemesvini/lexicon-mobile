@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "142326298091",
+    "project_id": "lexicon-english",
+    "storage_bucket": "lexicon-english.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142326298091:android:6399dc752029c274d795ae",
+        "android_client_info": {
+          "package_name": "com.lexiconenglish.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBil5gDiSCBBpM358UtMp-tNJSqRU_DGWA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

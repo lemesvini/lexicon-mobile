@@ -6,5 +6,6 @@ export type HomeworkRecord = {
   title: string | null;
   lesson_id: string;
   lesson_title: string | null;
+  homework_type: string | null;
   document: { slides?: { blocks?: HomeworkBlock[] }[] } | null;
 };

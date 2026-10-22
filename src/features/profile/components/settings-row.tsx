@@ -1,4 +1,4 @@
-import { Pressable, Text, useColorScheme, View } from "react-native";
+import { Pressable, Switch, Text, useColorScheme, View } from "react-native";
 import { ChevronRight, type LucideIcon } from "lucide-react-native";
 
 import { colors } from "@/theme/colors";
@@ -9,38 +9,75 @@ type Props = {
   onPress?: () => void;
   /** Shown on the right instead of the chevron, e.g. "Em breve". */
   detail?: string;
+  /** Centred red text with no icon, as iOS shows "Sign Out". */
   destructive?: boolean;
+  /** A switch on the right instead of the chevron; the row toggles it. */
+  value?: boolean;
+  onValueChange?: (value: boolean) => void;
 };
 
-export default function SettingsRow({ icon: Icon, label, onPress, detail, destructive }: Props) {
+/** A row in the style of the iOS Settings app: the icon on its own rounded
+ *  tile, the label at body size, and the chevron, value or switch on the
+ *  right. */
+export default function SettingsRow({
+  icon: Icon,
+  label,
+  onPress,
+  detail,
+  destructive,
+  value,
+  onValueChange,
+}: Props) {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const palette = colors[scheme];
-  const tint = destructive ? palette.destructive : palette.primary;
+  const isSwitch = value !== undefined && onValueChange !== undefined;
+  const press = isSwitch ? () => onValueChange(!value) : onPress;
+
+  if (destructive) {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        onPress={onPress}
+        className="min-h-[52px] items-center justify-center px-4 active:bg-muted"
+      >
+        <Text className="font-sans text-[17px] text-destructive">{label}</Text>
+      </Pressable>
+    );
+  }
 
   return (
     <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled: !onPress }}
-      disabled={!onPress}
-      onPress={onPress}
-      className="min-h-12 flex-row items-center gap-3 px-4 py-3 active:bg-muted"
+      accessibilityRole={isSwitch ? "switch" : "button"}
+      accessibilityState={isSwitch ? { checked: value } : { disabled: !press }}
+      disabled={!press}
+      onPress={press}
+      className="min-h-[52px] flex-row items-center gap-3.5 px-4 py-2.5 active:bg-muted"
     >
-      <View className="w-7 items-center">
-        <Icon size={20} strokeWidth={2} color={tint} />
+      <View
+        className={`size-[30px] items-center justify-center rounded-[8px] bg-primary ${
+          press ? "" : "opacity-50"
+        }`}
+      >
+        <Icon size={18} strokeWidth={2.25} color={palette.primaryForeground} />
       </View>
       <Text
-        className={`flex-1 font-sans text-base ${
-          destructive ? "font-semibold text-destructive" : "text-foreground"
-        } ${onPress ? "" : "opacity-50"}`}
+        className={`flex-1 font-sans text-[17px] text-foreground ${press ? "" : "opacity-50"}`}
       >
         {label}
       </Text>
-      {detail ? (
-        <Text className="font-sans text-sm text-muted-foreground">{detail}</Text>
+      {isSwitch ? (
+        <Switch
+          value={value}
+          onValueChange={onValueChange}
+          trackColor={{ true: palette.primary }}
+        />
       ) : (
-        onPress && !destructive && (
-          <ChevronRight size={18} color={palette.mutedForeground} />
-        )
+        <View className="flex-row items-center gap-1.5">
+          {detail ? (
+            <Text className="font-sans text-[17px] text-muted-foreground">{detail}</Text>
+          ) : null}
+          {onPress && <ChevronRight size={20} strokeWidth={2.25} color={palette.mutedForeground} />}
+        </View>
       )}
     </Pressable>
   );

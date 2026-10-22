@@ -13,7 +13,7 @@ const MIN_LENGTH = 8;
 /**
  * Sheet for setting a new password. Opened by PasswordGate while the account
  * is on a temporary password from the teacher panel — and then it can't be
- * dismissed — or from the profile sheet, when the student wants to change it.
+ * dismissed — or from the Me tab, when the student wants to change it.
  */
 export default function ChangePasswordScreen() {
   const { mustChangePassword: forced, signOut } = useAuth();

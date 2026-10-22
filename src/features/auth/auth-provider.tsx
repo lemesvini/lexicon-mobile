@@ -3,6 +3,8 @@ import type { AuthError, Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/lib/supabase";
 import { checkAccess, clearAccessCache } from "@/features/auth/student-access";
+import { cancelDailyPractice } from "@/features/notifications/daily-practice";
+import { unregisterPushToken } from "@/features/notifications/data/push-token";
 import type { AccessCheck } from "@/features/auth/types/access-check";
 import type { AccessSetters } from "@/features/auth/types/access-setters";
 import type { AuthState } from "@/features/auth/types/auth-state";
@@ -117,6 +119,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     signOut: async () => {
       setNotice(null);
+      // While the session can still reach the server: this phone stops getting
+      // the student's pushes and reminders. Neither holds up signing out.
+      await Promise.allSettled([unregisterPushToken(), cancelDailyPractice()]);
       await endSession();
     },
   };

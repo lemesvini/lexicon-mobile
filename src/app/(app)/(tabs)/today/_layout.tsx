@@ -20,6 +20,18 @@ export default function TodayLayout() {
           headerTitleStyle: { fontFamily: "Caprasimo", color: titleColor },
         }}
       />
+      {/* The bell's list, pushed inside the tab. */}
+      <Stack.Screen
+        name="notifications"
+        options={{
+          title: "Notificações",
+          headerLargeTitle: true,
+          headerLargeTitleStyle: { fontFamily: "Caprasimo", color: titleColor },
+          headerTitleStyle: { fontFamily: "Caprasimo", color: titleColor },
+          headerBackButtonDisplayMode: "minimal",
+          headerTintColor: colors[scheme].primary,
+        }}
+      />
     </Stack>
   );
 }

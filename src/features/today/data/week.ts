@@ -11,6 +11,10 @@
 // taken yet, so "first untaught lesson" pointed at Lesson One for a group well
 // into the course.
 
+import { liveClassOf } from "@/features/lessons/data/live-class";
+import { byNewest } from "@/features/lessons/data/next-lesson";
+import type { ClassRecord } from "@/features/lessons/types/class-record";
+import type { LessonProgress } from "@/features/lessons/types/lesson-progress";
 import type { HomeworkRecord } from "@/features/today/types/homework-record";
 import type { HomeworkStatus } from "@/features/today/types/homework-status";
 import type { PlanRecord } from "@/features/today/types/plan-record";
@@ -18,6 +22,7 @@ import type { PlannedClass } from "@/features/today/types/planned-class";
 import type { SubmissionRecord } from "@/features/today/types/submission-record";
 import type { TodayData } from "@/features/today/types/today-data";
 import type { WeekHomework } from "@/features/today/types/week-homework";
+import { splitTitle } from "@/lib/lesson-title";
 import { supabase } from "@/lib/supabase";
 
 /** The blocks a student answers (lexicon-web's EXERCISE_BLOCK_ORDER). */
@@ -50,16 +55,6 @@ function weekOf(today: Date): { start: string; end: string } {
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
   return { start: toDateKey(monday), end: toDateKey(sunday) };
-}
-
-/** "[Lesson Eight] Polite Requests" → label "Lesson Eight", name "Polite Requests". */
-function splitTitle(title: string): { label: string | null; name: string } {
-  const match = /^\[([^\]]*)\]\s*(.*)$/.exec(title.trim());
-  if (!match) return { label: null, name: title.trim() };
-  return {
-    label: match[1]!.trim() || null,
-    name: match[2]!.trim() || match[1]!.trim(),
-  };
 }
 
 /** Earliest day first; undated last. */
@@ -104,12 +99,14 @@ function isAnswered(value: unknown): boolean {
   return typeof value === "string" ? value.trim() !== "" : true;
 }
 
-async function listHomework(lessonIds: string[]): Promise<WeekHomework[]> {
+/** The homework of these lessons, with how far the student has got in each.
+ *  Also what the lesson page lists under its live class. */
+export async function listHomework(lessonIds: string[]): Promise<WeekHomework[]> {
   if (lessonIds.length === 0) return [];
 
   const { data, error } = await supabase
     .from("student_homework")
-    .select("id, title, lesson_id, lesson_title, document")
+    .select("id, title, lesson_id, lesson_title, homework_type, document")
     .in("lesson_id", lessonIds);
   if (error) throw new Error(error.message);
 
@@ -118,7 +115,7 @@ async function listHomework(lessonIds: string[]): Promise<WeekHomework[]> {
 
   const { data: submissionData, error: submissionError } = await supabase
     .from("student_submissions")
-    .select("homework_id, status, answers, score")
+    .select("homework_id, status, answers, score, graded_at")
     .in(
       "homework_id",
       homework.map((h) => h.id),
@@ -154,13 +151,38 @@ async function listHomework(lessonIds: string[]): Promise<WeekHomework[]> {
       return {
         id: h.id,
         title: h.title?.trim() || "Homework",
+        lessonId: h.lesson_id,
+        type: h.homework_type === "now-you-can" ? "now-you-can" : "activities",
         lessonName: splitTitle(h.lesson_title ?? "").name,
         total: ids.length,
         answered: ids.filter((id) => isAnswered(answers[id])).length,
         status,
         score: status === "graded" ? (submission?.score ?? null) : null,
+        gradedAt: status === "graded" ? (submission?.graded_at ?? null) : null,
       };
     });
+}
+
+/** Where the student stands in a class on their plan — the same steps, read
+ *  the same way, as on its lesson page. */
+async function fetchProgress(lesson: PlannedClass): Promise<LessonProgress> {
+  const [classes, homework] = await Promise.all([
+    supabase
+      .from("student_classes")
+      .select("class_id, group_id, lesson_id, class_date, starts_at, held, present, excused")
+      .eq("lesson_id", lesson.lessonId)
+      .eq("group_id", lesson.groupId),
+    listHomework([lesson.lessonId]),
+  ]);
+  if (classes.error) throw new Error(classes.error.message);
+
+  return {
+    liveClass: liveClassOf(((classes.data ?? []) as ClassRecord[]).sort(byNewest), {
+      scheduled_on: lesson.scheduledOn,
+      starts_at: lesson.startsAt,
+    }),
+    homework,
+  };
 }
 
 export async function fetchToday(now = new Date()): Promise<TodayData> {
@@ -196,9 +218,15 @@ export async function fetchToday(now = new Date()): Promise<TodayData> {
     ),
   ];
 
+  const [homework, nextProgress] = await Promise.all([
+    listHomework(lessonIds),
+    next ? fetchProgress(next) : null,
+  ]);
+
   return {
     hasPlan: plan.length > 0,
     next,
-    week: { start, end, classes, homework: await listHomework(lessonIds) },
+    nextProgress,
+    week: { start, end, classes, homework },
   };
 }
