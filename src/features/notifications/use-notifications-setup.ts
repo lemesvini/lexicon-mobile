@@ -4,30 +4,9 @@ import { router, type Href } from "expo-router";
 import * as Notifications from "expo-notifications";
 
 import { syncDailyPractice } from "@/features/notifications/daily-practice";
-import { registerPushToken } from "@/features/notifications/data/push-token";
-import { getPermission, requestPermission } from "@/features/notifications/permissions";
+import { getPermission } from "@/features/notifications/permissions";
 import { ensureChannels, notificationsSupported } from "@/features/notifications/setup";
-
-// expo-sqlite's localStorage, installed in src/lib/supabase.ts. Android lets
-// the app ask again after a "no", and asking at every launch would be a nag:
-// after the first time, the Me tab's switches are where it's turned on.
-const ASKED_KEY = "lexicon.notifications-asked";
-
-function askedBefore(): boolean {
-  try {
-    return localStorage.getItem(ASKED_KEY) === "yes";
-  } catch {
-    return false;
-  }
-}
-
-function rememberAsked() {
-  try {
-    localStorage.setItem(ASKED_KEY, "yes");
-  } catch {
-    // Asked again next launch, at worst.
-  }
-}
+import { startNotifications } from "@/features/notifications/start";
 
 /** Opens what a tapped notification points at — its `data.url`, an app route. */
 function open(response: Notifications.NotificationResponse) {
@@ -39,20 +18,16 @@ function open(response: Notifications.NotificationResponse) {
 
 async function setUp() {
   await ensureChannels();
-  let permission = await getPermission();
-  if (permission === "undetermined" && !askedBefore()) {
-    rememberAsked();
-    permission = await requestPermission();
-  }
-  if (permission !== "granted") return;
-  await Promise.allSettled([registerPushToken(), syncDailyPractice()]);
+  if ((await getPermission()) !== "granted") return;
+  await startNotifications();
 }
 
 /**
- * Everything notifications need while a student is signed in: the permission
- * (asked once, on the first visit), this device's push token on the server,
- * the week of practice reminders, and opening the screen a tapped notification
- * is about — including the one that launched the app.
+ * Everything notifications need while a student is signed in: this device's
+ * push token on the server, the week of practice reminders, and opening the
+ * screen a tapped notification is about — including the one that launched the
+ * app. The permission itself is asked in the permissions sheet, which explains
+ * it first (see usePermissionsPrompt), and from the Me tab's switches.
  *
  * Lives in the signed-in layout, so it only runs with a session to file the
  * token under, and a tap that launched the app is handled once the screens it
@@ -66,12 +41,12 @@ export function useNotificationsSetup() {
     if (launchedBy) open(launchedBy);
     const taps = Notifications.addNotificationResponseReceivedListener(open);
 
+    // Registers the token at every launch, which also catches the OS rolling
+    // it. Never from addPushTokenListener: getExpoPushTokenAsync fetches the
+    // device token, which fires that listener — registering from it loops
+    // forever, hundreds of requests a second, until iOS kills the app.
     setUp().catch(() => {});
 
-    // The OS can roll the token; Expo's follows it.
-    const tokens = Notifications.addPushTokenListener(() => {
-      registerPushToken().catch(() => {});
-    });
     // Tops the week of reminders back up.
     const foreground = AppState.addEventListener("change", (state) => {
       if (state === "active") syncDailyPractice().catch(() => {});
@@ -79,7 +54,6 @@ export function useNotificationsSetup() {
 
     return () => {
       taps.remove();
-      tokens.remove();
       foreground.remove();
     };
   }, []);

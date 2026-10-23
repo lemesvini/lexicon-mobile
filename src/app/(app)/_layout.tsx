@@ -16,6 +16,7 @@ export default function AppLayout() {
       <Stack.Screen name="(modals)/change-password" options={sheetOptions} />
       <Stack.Screen name="(modals)/report/[reportId]" options={sheetOptions} />
       <Stack.Screen name="(modals)/context-note" options={sheetOptions} />
+      <Stack.Screen name="(modals)/permissions" options={sheetOptions} />
       {/* Above the tabs rather than in the Path tab's stack: a screen pushed
           inside a native tab keeps the tab bar, and a lesson is read without
           it. */}

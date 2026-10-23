@@ -17,7 +17,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         },
         bundleIdentifier: "com.lexiconenglish.app",
         config: { usesNonExemptEncryption: false },
-
+        infoPlist: {
+            // Never requested: expo-image and expo-file-system link the Photos
+            // API (for ph:// URIs), and App Store Connect rejects any build
+            // that references it without a purpose string.
+            NSPhotoLibraryUsageDescription:
+                "O Lexicon pode acessar suas fotos para exibir imagens que você escolher no app.",
+        },
     },
     android: {
         package: "com.lexiconenglish.app",

@@ -6,6 +6,7 @@ import CurrentLessonCard from "@/features/today/components/current-lesson";
 
 import { colors } from "@/theme/colors";
 import { useUnreadCount } from "@/features/notifications/data/use-unread-count";
+import { usePermissionsPrompt } from "@/features/permissions/use-permissions-prompt";
 import MyWeek from "@/features/today/components/my-week";
 import { useToday } from "@/features/today/data/use-today";
 
@@ -17,6 +18,7 @@ export default function TodayScreen() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const { state, refreshing, refresh } = useToday();
   const unread = useUnreadCount();
+  usePermissionsPrompt();
 
   return (
     <>
