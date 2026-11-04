@@ -1,6 +1,6 @@
-// Where the privacy policy and terms of use are published. Neither page exists
-// yet; while a link is null its row shows as "Em breve" instead of opening.
-export const legalLinks: { privacy: string | null; terms: string | null } = {
-  privacy: null,
-  terms: null,
+// Where the privacy policy and terms of use are published: public pages on
+// lexicon-web, the same addresses given to the stores.
+export const legalLinks = {
+  privacy: "https://lexicon-english.com/privacy",
+  terms: "https://lexicon-english.com/terms",
 };

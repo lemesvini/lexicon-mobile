@@ -3,6 +3,7 @@ import "../global.css";
 import { Stack, ThemeProvider } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 import { AuthProvider, useAuth } from "@/features/auth/auth-provider";
 import { PasswordGate } from "@/features/auth/password-gate";
@@ -18,12 +19,15 @@ export default function RootLayout() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
 
   return (
-    <ThemeProvider value={navigationThemes[scheme]}>
-      <AuthProvider>
-        <SplashController />
-        <RootNavigator />
-      </AuthProvider>
-    </ThemeProvider>
+    // KeyboardProvider: the keyboard's height, for the screens with a text box.
+    <KeyboardProvider>
+      <ThemeProvider value={navigationThemes[scheme]}>
+        <AuthProvider>
+          <SplashController />
+          <RootNavigator />
+        </AuthProvider>
+      </ThemeProvider>
+    </KeyboardProvider>
   );
 }
 

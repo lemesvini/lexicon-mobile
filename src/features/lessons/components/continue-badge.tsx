@@ -18,7 +18,7 @@ type Props = {
   lessonName: string;
 };
 
-/** The "Continuar" bubble over the group's next lesson. It bobs up and down, to
+/** The "Check It Out!" bubble over the group's next lesson. It bobs up and down, to
  *  say where to go — unless the system asks for less motion. Opens the lesson,
  *  as the node under it does. */
 export default function ContinueBadge({ lessonId, lessonName }: Props) {
@@ -45,11 +45,14 @@ export default function ContinueBadge({ lessonId, lessonName }: Props) {
           router.push({ pathname: "/lesson/[lessonId]", params: { lessonId } });
         }}
         accessibilityRole="button"
-        accessibilityLabel={`Continuar: ${lessonName}`}
+        accessibilityLabel={`Check it out: ${lessonName}`}
         className="rounded-xl bg-primary px-5 py-2.5 active:opacity-80"
       >
-        <Text className="font-sans text-sm font-bold uppercase tracking-widest text-primary-foreground">
-          Continuar
+        <Text
+          numberOfLines={1}
+          className="font-sans text-sm font-bold uppercase tracking-widest text-primary-foreground"
+        >
+          Check It Out!
         </Text>
       </Pressable>
       {/* The point, towards the node. */}

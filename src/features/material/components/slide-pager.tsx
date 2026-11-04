@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { FlatList, ScrollView, View } from "react-native";
+import { FlatList, View } from "react-native";
 
 import { haptics } from "@/lib/haptics";
+import KeyboardAwareScrollView, { KEYBOARD_GAP } from "@/lib/keyboard-aware-scroll-view";
 
 type Props<T> = {
   /** A material's slides, a homework's questions. */
@@ -59,18 +60,19 @@ export default function SlidePager<T>({ pages, renderPage, index, onIndexChange,
             }
           }}
           renderItem={({ item, index: position }) => (
-            <ScrollView
+            <KeyboardAwareScrollView
               style={{ width }}
               contentContainerStyle={{ paddingBottom: bottomInset + 24 }}
               contentContainerClassName="gap-6 px-4 pt-2"
-              // A written answer: the page makes room for the keyboard, and a
-              // tap on an option doesn't first have to dismiss it.
-              automaticallyAdjustKeyboardInsets
+              // A written answer: the page makes room for the keyboard and
+              // scrolls the box above it, and a tap on an option doesn't first
+              // have to dismiss it.
+              bottomOffset={KEYBOARD_GAP}
               keyboardShouldPersistTaps="handled"
               keyboardDismissMode="interactive"
             >
               {renderPage(item, position)}
-            </ScrollView>
+            </KeyboardAwareScrollView>
           )}
         />
       ) : null}

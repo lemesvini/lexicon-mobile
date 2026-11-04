@@ -5,6 +5,7 @@ import { router, Stack, useLocalSearchParams } from "expo-router";
 import { fetchReport } from "@/features/profile/data/progress";
 import type { ReportState } from "@/features/profile/types/report-state";
 import { unitName } from "@/features/profile/unit-name";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 import { colors } from "@/theme/colors";
 
 /** "8.5" → "8,5", "10" → "10". */
@@ -17,6 +18,7 @@ export default function ReportScreen() {
   const { reportId } = useLocalSearchParams<{ reportId: string }>();
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const [state, setState] = useState<ReportState>({ status: "loading" });
+  const closeIcon = useToolbarIcon("xmark", "close");
 
   useEffect(() => {
     let current = true;
@@ -44,7 +46,8 @@ export default function ReportScreen() {
       <Stack.Screen options={{ title: report ? unitName(report.unit) : "Relatório" }} />
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
-          icon="xmark"
+          icon={closeIcon}
+          accessibilityLabel="Fechar"
           onPress={() => router.back()}
           tintColor={colors[scheme].primary}
         />

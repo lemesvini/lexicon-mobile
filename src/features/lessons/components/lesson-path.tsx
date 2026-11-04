@@ -23,8 +23,8 @@ type Props = {
 const TRACK_WIDTH = 22;
 /** Between a node's edge and the chip beside it. */
 const CHIP_GAP = 12;
-/** Wide enough for "Continuar" at its biggest pulse. */
-const BADGE_BOX = 200;
+/** Wide enough for "Check It Out!" at its biggest pulse. */
+const BADGE_BOX = 240;
 
 /** The whole module's path: one track, every unit's banner on it, and the
  *  lessons along it. */

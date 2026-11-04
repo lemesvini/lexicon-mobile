@@ -82,7 +82,9 @@ export default function SkillCard({
         </View>
         {/* Pushes the words to the bottom, so a short subtitle doesn't leave a gap under it. */}
         <View className="min-h-3 flex-1" />
-        <Text className="font-display text-3xl font-bold text-primary" numberOfLines={1}>
+        {/* Caprasimo has one weight: `font-bold` would have Android fake a wider
+            one. Shrinks to fit a narrow card rather than cutting the word. */}
+        <Text className="font-display text-3xl text-primary" numberOfLines={1} adjustsFontSizeToFit>
           {title}
         </Text>
         {/* <Text className="mt-1 font-sans text-base text-muted-foreground" numberOfLines={2}>

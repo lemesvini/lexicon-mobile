@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PermissionCard from "@/features/permissions/components/permission-card";
 import { usePermissions } from "@/features/permissions/use-permissions";
 import PracticeButton from "@/features/practice/components/practice-button";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 import { colors, practiceColors } from "@/theme/colors";
 
 /**
@@ -17,6 +18,7 @@ export default function PermissionsScreen() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const insets = useSafeAreaInsets();
   const permissions = usePermissions();
+  const closeIcon = useToolbarIcon("xmark", "close");
   const done = permissions.microphone === "granted" && permissions.notifications === "granted";
 
   return (
@@ -24,7 +26,7 @@ export default function PermissionsScreen() {
       <Stack.Screen options={{ title: "Antes de começar" }} />
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
-          icon="xmark"
+          icon={closeIcon}
           accessibilityLabel="Fechar"
           onPress={() => router.back()}
           tintColor={colors[scheme].primary}

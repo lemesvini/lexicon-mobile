@@ -8,6 +8,7 @@ import SlidePager from "@/features/material/components/slide-pager";
 import SlideProgress from "@/features/material/components/slide-progress";
 import { useMaterial } from "@/features/material/data/use-material";
 import { haptics } from "@/lib/haptics";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 import { colors } from "@/theme/colors";
 
 /** The bottom toolbar, above the home indicator. */
@@ -28,41 +29,12 @@ export default function StepsScreen() {
   const index = Math.min(Math.max(requested, 0), Math.max(slides.length - 1, 0));
   const last = index === slides.length - 1;
   const tint = colors[scheme].primary;
+  // Android's toolbar shows icons only; iOS keeps the words.
+  const backIcon = useToolbarIcon(null, "arrow_back");
+  const nextIcon = useToolbarIcon(null, last ? "check" : "arrow_forward");
 
   return (
     <View className="flex-1 bg-background">
-      {slides.length > 0 ? (
-        <Stack.Toolbar placement="bottom">
-          <Stack.Toolbar.Button
-            onPress={() => {
-              haptics.tap();
-              setRequested(index - 1);
-            }}
-            disabled={index === 0}
-            tintColor={tint}
-          >
-            Voltar
-          </Stack.Toolbar.Button>
-          <Stack.Toolbar.Spacer />
-          <Stack.Toolbar.Button
-            variant="prominent"
-            onPress={() => {
-              if (last) {
-                // The material read to its end.
-                haptics.success();
-                router.back();
-              } else {
-                haptics.tap();
-                setRequested(index + 1);
-              }
-            }}
-            tintColor={tint}
-          >
-            {last ? "Concluir" : "Seguir"}
-          </Stack.Toolbar.Button>
-        </Stack.Toolbar>
-      ) : null}
-
       {state.status === "ready" && slides.length > 0 ? (
         <>
           <SlideProgress
@@ -90,6 +62,44 @@ export default function StepsScreen() {
             : "O material desta aula ainda não foi publicado."}
         </Text>
       )}
+
+      {/* Last, over the page: on Android the bottom toolbar is a view of the
+          screen's own, and the pager drawn after it would take its taps. */}
+      {slides.length > 0 ? (
+        <Stack.Toolbar placement="bottom">
+          <Stack.Toolbar.Button
+            icon={backIcon}
+            accessibilityLabel="Voltar"
+            onPress={() => {
+              haptics.tap();
+              setRequested(index - 1);
+            }}
+            disabled={index === 0}
+            tintColor={tint}
+          >
+            Voltar
+          </Stack.Toolbar.Button>
+          <Stack.Toolbar.Spacer />
+          <Stack.Toolbar.Button
+            icon={nextIcon}
+            accessibilityLabel={last ? "Concluir" : "Seguir"}
+            variant="prominent"
+            onPress={() => {
+              if (last) {
+                // The material read to its end.
+                haptics.success();
+                router.back();
+              } else {
+                haptics.tap();
+                setRequested(index + 1);
+              }
+            }}
+            tintColor={tint}
+          >
+            {last ? "Concluir" : "Seguir"}
+          </Stack.Toolbar.Button>
+        </Stack.Toolbar>
+      ) : null}
     </View>
   );
 }

@@ -225,7 +225,8 @@ export default function CurrentLessonCard(props: Props) {
       {subtitle ? (
         <Text className="mt-2 font-sans text-base text-accent-foreground/70">{subtitle}</Text>
       ) : null}
-      {rows.length > 0 ? <Steps rows={rows} current={current} /> : null}
+      {/* A lone step, or two, across the card reads as a stray dot, not a path. */}
+      {rows.length >= 3 ? <Steps rows={rows} current={current} /> : null}
       <Pressable
         onPress={() => {
           haptics.tap();

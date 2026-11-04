@@ -1,9 +1,11 @@
 import { useRef, useState } from "react";
-import { ScrollView, Text, TextInput, useColorScheme, View } from "react-native";
+import { Text, TextInput, useColorScheme, View } from "react-native";
 import { router, Stack } from "expo-router";
 
 import AuthField from "@/features/auth/components/auth-field";
 import { addContextNote, MAX_BODY, MAX_TITLE } from "@/features/context/data/student-context";
+import KeyboardAwareScrollView, { KEYBOARD_GAP } from "@/lib/keyboard-aware-scroll-view";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 import { colors } from "@/theme/colors";
 
 /**
@@ -14,6 +16,8 @@ import { colors } from "@/theme/colors";
 export default function ContextNoteScreen() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const palette = colors[scheme];
+  const closeIcon = useToolbarIcon("xmark", "close");
+  const saveIcon = useToolbarIcon("checkmark", "check");
   const bodyRef = useRef<TextInput>(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -41,7 +45,7 @@ export default function ContextNoteScreen() {
       <Stack.Screen options={{ title: "Adicionar" }} />
       <Stack.Toolbar placement="left">
         <Stack.Toolbar.Button
-          icon="xmark"
+          icon={closeIcon}
           accessibilityLabel="Cancelar"
           onPress={() => router.back()}
           tintColor={palette.primary}
@@ -52,7 +56,7 @@ export default function ContextNoteScreen() {
           off until both fields have something in them. */}
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
-          icon="checkmark"
+          icon={saveIcon}
           accessibilityLabel="Salvar"
           variant="prominent"
           onPress={save}
@@ -61,8 +65,9 @@ export default function ContextNoteScreen() {
         />
       </Stack.Toolbar>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         contentInsetAdjustmentBehavior="automatic"
+        bottomOffset={KEYBOARD_GAP}
         keyboardShouldPersistTaps="handled"
         contentContainerClassName="gap-5 p-6"
       >
@@ -112,7 +117,7 @@ export default function ContextNoteScreen() {
         <Text className="text-center font-sans text-xs text-muted-foreground">
           Fica salvo com a data de hoje e não pode ser apagado.
         </Text>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </>
   );
 }

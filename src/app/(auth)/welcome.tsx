@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAuth } from "@/features/auth/auth-provider";
 import HeroHeadline from "@/features/auth/components/hero-headline";
+import { legalLinks } from "@/features/profile/legal-links";
 
 const LANDING_URL = "https://lexicon-english.com";
 
@@ -65,6 +66,25 @@ export default function WelcomeScreen() {
             Ainda não é aluno? <Text className="font-semibold text-ring">Agende seu nivelamento ›</Text>
           </Text>
         </Pressable>
+        <Text className="text-center font-sans text-xs leading-5 text-muted-foreground">
+          Ao entrar, você concorda com os{" "}
+          <Text
+            accessibilityRole="link"
+            onPress={() => void WebBrowser.openBrowserAsync(legalLinks.terms)}
+            className="font-semibold underline"
+          >
+            Termos de uso
+          </Text>{" "}
+          e a{" "}
+          <Text
+            accessibilityRole="link"
+            onPress={() => void WebBrowser.openBrowserAsync(legalLinks.privacy)}
+            className="font-semibold underline"
+          >
+            Política de privacidade
+          </Text>
+          .
+        </Text>
       </Animated.View>
     </View>
   );

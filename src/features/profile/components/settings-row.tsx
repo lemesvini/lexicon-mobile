@@ -7,7 +7,7 @@ type Props = {
   icon: LucideIcon;
   label: string;
   onPress?: () => void;
-  /** Shown on the right instead of the chevron, e.g. "Em breve". */
+  /** Shown on the right instead of the chevron, e.g. a date. */
   detail?: string;
   /** Centred red text with no icon, as iOS shows "Sign Out". */
   destructive?: boolean;

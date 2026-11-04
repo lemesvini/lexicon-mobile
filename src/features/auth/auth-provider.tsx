@@ -1,5 +1,5 @@
 import { createContext, use, useEffect, useState } from "react";
-import type { AuthError, Session } from "@supabase/supabase-js";
+import { type AuthError, FunctionsFetchError, type Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/lib/supabase";
 import { checkAccess, clearAccessCache } from "@/features/auth/student-access";
@@ -123,6 +123,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // the student's pushes and reminders. Neither holds up signing out.
       await Promise.allSettled([unregisterPushToken(), cancelDailyPractice()]);
       await endSession();
+    },
+    deleteAccount: async () => {
+      // lexicon-web's delete-account function. While it hasn't succeeded the
+      // session stands, so the student can simply try again.
+      const { error } = await supabase.functions.invoke("delete-account");
+      if (error) {
+        return error instanceof FunctionsFetchError
+          ? "Sem conexão. Confira sua internet e tente de novo."
+          : "Não foi possível excluir sua conta. Tente de novo.";
+      }
+      // The push token went with the account, and with it the session the call
+      // would need: this only forgets it here. endSession falls back to local.
+      await Promise.allSettled([unregisterPushToken(), cancelDailyPractice()]);
+      await endSession();
+      setNotice("Sua conta foi excluída.");
+      return null;
     },
   };
 

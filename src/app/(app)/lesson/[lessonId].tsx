@@ -9,6 +9,7 @@ import LessonSteps from "@/features/lessons/components/lesson-steps";
 import MaterialSteps from "@/features/lessons/components/material-steps";
 import { useLessonDetail } from "@/features/lessons/data/use-lesson-detail";
 import { haptics } from "@/lib/haptics";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 import { colors } from "@/theme/colors";
 
 /** The bottom toolbar, above the home indicator. */
@@ -23,6 +24,7 @@ export default function LessonScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const lesson = state.status === "ready" ? state.data : null;
+  const slidesIcon = useToolbarIcon("display", "slideshow");
 
   return (
     <>
@@ -32,7 +34,7 @@ export default function LessonScreen() {
         <Stack.Toolbar placement="right">
           {/* The class's slides, as the group saw them. */}
           <Stack.Toolbar.Button
-            icon="display"
+            icon={slidesIcon}
             accessibilityLabel="Ver a apresentação da aula"
             onPress={() => {
               haptics.tap();
@@ -40,8 +42,11 @@ export default function LessonScreen() {
             }}
             // The glass behind a header button follows the system's scheme,
             // not the green under it — so the path's tint, not the hero's
-            // cream, which vanished on the light glass.
-            tintColor={colors[scheme].primary}
+            // cream, which vanished on the light glass. Android has no glass:
+            // there the button is right on the green, and the cream it is.
+            tintColor={
+              process.env.EXPO_OS === "android" ? colors[scheme].primaryText : colors[scheme].primary
+            }
           />
         </Stack.Toolbar>
       ) : null}

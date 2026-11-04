@@ -1,10 +1,12 @@
 import { useRef, useState } from "react";
-import { ScrollView, Text, type TextInput, useColorScheme, View } from "react-native";
+import { Text, type TextInput, useColorScheme, View } from "react-native";
 import { router, Stack } from "expo-router";
 
 import { useAuth } from "@/features/auth/auth-provider";
 import AuthField from "@/features/auth/components/auth-field";
 import SubmitButton from "@/features/auth/components/submit-button";
+import KeyboardAwareScrollView, { KEYBOARD_GAP } from "@/lib/keyboard-aware-scroll-view";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 import { colors } from "@/theme/colors";
 
 /** Sheet over the welcome screen. On success Stack.Protected removes the whole
@@ -12,6 +14,7 @@ import { colors } from "@/theme/colors";
 export default function SignInScreen() {
   const { signIn, notice } = useAuth();
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
+  const closeIcon = useToolbarIcon("xmark", "close");
   const passwordRef = useRef<TextInput>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,16 +40,17 @@ export default function SignInScreen() {
       <Stack.Screen options={{ title: "Entrar" }} />
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
-          icon="xmark"
+          icon={closeIcon}
+          accessibilityLabel="Fechar"
           onPress={() => router.back()}
           tintColor={colors[scheme].primary}
         />
       </Stack.Toolbar>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         contentInsetAdjustmentBehavior="automatic"
-        // automaticallyAdjustKeyboardInsets
-        // keyboardShouldPersistTaps="handled"
+        bottomOffset={KEYBOARD_GAP}
+        keyboardShouldPersistTaps="handled"
         contentContainerClassName="gap-5 p-6"
       >
         <View className="">
@@ -94,7 +98,7 @@ export default function SignInScreen() {
         <Text className="text-center font-sans text-sm text-muted-foreground">
           Esqueceu a senha? Peça uma nova ao seu professor.
         </Text>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </>
   );
 }

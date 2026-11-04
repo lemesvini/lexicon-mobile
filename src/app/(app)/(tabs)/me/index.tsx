@@ -10,6 +10,7 @@ import {
   LogOut,
   ShieldCheck,
   Sparkles,
+  Trash2,
 } from "lucide-react-native";
 
 import { useAuth } from "@/features/auth/auth-provider";
@@ -37,10 +38,6 @@ export default function MeScreen() {
       // Stack.Protected takes the app away on its own.
       { text: "Sair", style: "destructive", onPress: () => void signOut() },
     ]);
-  }
-
-  function open(url: string | null) {
-    return url ? () => void WebBrowser.openBrowserAsync(url) : undefined;
   }
 
   return (
@@ -109,20 +106,23 @@ export default function MeScreen() {
           label="Trocar senha"
           onPress={() => router.push("/change-password")}
         />
+        <SettingsRow
+          icon={Trash2}
+          label="Excluir conta"
+          onPress={() => router.push("/delete-account")}
+        />
       </SettingsSection>
 
       <SettingsSection title="Sobre">
         <SettingsRow
           icon={ShieldCheck}
           label="Política de privacidade"
-          onPress={open(legalLinks.privacy)}
-          detail={legalLinks.privacy ? undefined : "Em breve"}
+          onPress={() => void WebBrowser.openBrowserAsync(legalLinks.privacy)}
         />
         <SettingsRow
           icon={FileText}
           label="Termos de uso"
-          onPress={open(legalLinks.terms)}
-          detail={legalLinks.terms ? undefined : "Em breve"}
+          onPress={() => void WebBrowser.openBrowserAsync(legalLinks.terms)}
         />
       </SettingsSection>
 

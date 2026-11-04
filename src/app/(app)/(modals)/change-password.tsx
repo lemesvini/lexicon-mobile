@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { BackHandler, Pressable, ScrollView, Text, type TextInput, useColorScheme, View } from "react-native";
+import { BackHandler, Pressable, Text, type TextInput, useColorScheme, View } from "react-native";
 import { router, Stack } from "expo-router";
 
 import { useAuth } from "@/features/auth/auth-provider";
 import AuthField from "@/features/auth/components/auth-field";
 import SubmitButton from "@/features/auth/components/submit-button";
+import KeyboardAwareScrollView, { KEYBOARD_GAP } from "@/lib/keyboard-aware-scroll-view";
 import { supabase } from "@/lib/supabase";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 import { colors } from "@/theme/colors";
 
 const MIN_LENGTH = 8;
@@ -18,6 +20,7 @@ const MIN_LENGTH = 8;
 export default function ChangePasswordScreen() {
   const { mustChangePassword: forced, signOut } = useAuth();
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
+  const closeIcon = useToolbarIcon("xmark", "close");
   const confirmationRef = useRef<TextInput>(null);
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
@@ -74,20 +77,25 @@ export default function ChangePasswordScreen() {
         options={{
           title: forced ? "Crie sua senha" : "Trocar senha",
           gestureEnabled: !forced,
+          // Android's bar has a back arrow of its own, which the swipe and the
+          // BackHandler don't cover.
+          headerBackVisible: !forced,
         }}
       />
       {!forced && (
         <Stack.Toolbar placement="right">
           <Stack.Toolbar.Button
-            icon="xmark"
+            icon={closeIcon}
+            accessibilityLabel="Fechar"
             onPress={() => router.back()}
             tintColor={colors[scheme].primary}
           />
         </Stack.Toolbar>
       )}
 
-      <ScrollView
+      <KeyboardAwareScrollView
         contentInsetAdjustmentBehavior="automatic"
+        bottomOffset={KEYBOARD_GAP}
         keyboardShouldPersistTaps="handled"
         contentContainerClassName="gap-5 p-6"
       >
@@ -150,7 +158,7 @@ export default function ChangePasswordScreen() {
             </Text>
           </Pressable>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </>
   );
 }

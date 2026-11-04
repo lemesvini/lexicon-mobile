@@ -18,4 +18,7 @@ export type AuthState = {
   /** Resolves with an error message, or null once the student is let in. */
   signIn: (email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
+  /** Resolves with an error message, or null once the account is gone and the
+   *  session with it. */
+  deleteAccount: () => Promise<string | null>;
 };

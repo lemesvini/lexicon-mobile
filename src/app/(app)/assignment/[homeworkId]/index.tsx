@@ -11,6 +11,7 @@ import type { ExerciseItem } from "@/features/homework/types/exercise-item";
 import SlidePager from "@/features/material/components/slide-pager";
 import SlideProgress from "@/features/material/components/slide-progress";
 import { haptics } from "@/lib/haptics";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 import { colors } from "@/theme/colors";
 
 /** The bottom toolbar, above the home indicator. */
@@ -92,39 +93,12 @@ export default function AssignmentScreen() {
 
   const tint = colors[scheme].primary;
   const page = pages[index];
+  // Android's toolbar shows icons only; iOS keeps the words.
+  const backIcon = useToolbarIcon(null, "arrow_back");
+  const nextIcon = useToolbarIcon(null, !last ? "arrow_forward" : answering ? "send" : "check");
 
   return (
     <View className="flex-1 bg-background">
-      {page ? (
-        <Stack.Toolbar placement="bottom">
-          <Stack.Toolbar.Button
-            onPress={() => {
-              haptics.tap();
-              setRequested(index - 1);
-            }}
-            disabled={index === 0}
-            tintColor={tint}
-          >
-            Voltar
-          </Stack.Toolbar.Button>
-          <Stack.Toolbar.Spacer />
-          <Stack.Toolbar.Button
-            variant="prominent"
-            disabled={submitting}
-            onPress={() => {
-              // Handing in buzzes again when it lands — success, or a warning.
-              haptics.tap();
-              if (!last) setRequested(index + 1);
-              else if (answering) handIn();
-              else router.back();
-            }}
-            tintColor={tint}
-          >
-            {!last ? "Seguir" : answering ? "Entregar" : "Concluir"}
-          </Stack.Toolbar.Button>
-        </Stack.Toolbar>
-      ) : null}
-
       {assignment && page ? (
         <>
           <SlideProgress
@@ -167,6 +141,42 @@ export default function AssignmentScreen() {
               : "Este homework ainda não tem questões."}
         </Text>
       )}
+
+      {/* Last, over the page: on Android the bottom toolbar is a view of the
+          screen's own, and the pager drawn after it would take its taps. */}
+      {page ? (
+        <Stack.Toolbar placement="bottom">
+          <Stack.Toolbar.Button
+            icon={backIcon}
+            accessibilityLabel="Voltar"
+            onPress={() => {
+              haptics.tap();
+              setRequested(index - 1);
+            }}
+            disabled={index === 0}
+            tintColor={tint}
+          >
+            Voltar
+          </Stack.Toolbar.Button>
+          <Stack.Toolbar.Spacer />
+          <Stack.Toolbar.Button
+            icon={nextIcon}
+            accessibilityLabel={!last ? "Seguir" : answering ? "Entregar" : "Concluir"}
+            variant="prominent"
+            disabled={submitting}
+            onPress={() => {
+              // Handing in buzzes again when it lands — success, or a warning.
+              haptics.tap();
+              if (!last) setRequested(index + 1);
+              else if (answering) handIn();
+              else router.back();
+            }}
+            tintColor={tint}
+          >
+            {!last ? "Seguir" : answering ? "Entregar" : "Concluir"}
+          </Stack.Toolbar.Button>
+        </Stack.Toolbar>
+      ) : null}
     </View>
   );
 }

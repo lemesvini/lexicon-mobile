@@ -37,7 +37,7 @@ export const BANNER_MARGIN = 8;
 export const TRACK_ABOVE = 400;
 /** From one node's centre to the next. */
 const ROW = 136;
-/** The "Continuar" badge over the current lesson, point included. */
+/** The "Check It Out!" badge over the current lesson, point included. */
 const BADGE_HEIGHT = 48;
 /** Extra room above the current lesson, for that badge. */
 const BADGE_SPACE = 44;

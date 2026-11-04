@@ -9,6 +9,7 @@ import { useUnreadCount } from "@/features/notifications/data/use-unread-count";
 import { usePermissionsPrompt } from "@/features/permissions/use-permissions-prompt";
 import MyWeek from "@/features/today/components/my-week";
 import { useToday } from "@/features/today/data/use-today";
+import { useToolbarIcon } from "@/lib/toolbar-icon";
 
 cssInterop(Check, {
   className: { target: "style", nativeStyleToProp: { color: true } },
@@ -18,17 +19,18 @@ export default function TodayScreen() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const { state, refreshing, refresh } = useToday();
   const unread = useUnreadCount();
+  const bellIcon = useToolbarIcon("bell.fill", "notifications");
   usePermissionsPrompt();
 
   return (
     <>
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
+          icon={bellIcon}
           accessibilityLabel="Notificações"
           onPress={() => router.push("/today/notifications")}
           tintColor={colors[scheme].primary}
         >
-          <Stack.Toolbar.Icon sf="bell.fill" />
           {unread > 0 ? (
             <Stack.Toolbar.Badge>{unread > 9 ? "9+" : String(unread)}</Stack.Toolbar.Badge>
           ) : null}
