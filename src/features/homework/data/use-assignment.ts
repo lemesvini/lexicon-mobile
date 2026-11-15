@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { track } from "@/features/analytics/posthog";
 import { fetchAssignment, saveAnswers, submitAnswers } from "@/features/homework/data/assignment";
 import type { AnswerValue } from "@/features/homework/types/answer-value";
 import type { AssignmentState } from "@/features/homework/types/assignment-state";
@@ -93,6 +94,7 @@ export function useAssignment(homeworkId: string) {
     try {
       pending.current = null;
       await submitAnswers(homeworkId, answers);
+      track("homework_submitted", { homework_id: homeworkId });
       setReloadKey((key) => key + 1);
     } finally {
       setSubmitting(false);

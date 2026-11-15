@@ -79,7 +79,6 @@ export default function ContextNoteScreen() {
           placeholder="Ex.: Vou viajar a trabalho em novembro"
           autoCapitalize="sentences"
           autoCorrect
-          autoFocus
           returnKeyType="next"
           submitBehavior="submit"
           onSubmitEditing={() => bodyRef.current?.focus()}

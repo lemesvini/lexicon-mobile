@@ -51,7 +51,7 @@ export default function SpeakingScreen() {
   const scheme = useColorScheme() === "dark" ? "dark" : "light";
   const palette = colors[scheme];
   const insets = useSafeAreaInsets();
-  const session = usePracticeSession(fetchSpeakingCards);
+  const session = usePracticeSession("speaking", fetchSpeakingCards);
   const card = session.current;
 
   const [flipped, setFlipped] = useState(false);

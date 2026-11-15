@@ -5,6 +5,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
+import { AnalyticsProvider } from "@/features/analytics/analytics-provider";
+import { IdentitySync } from "@/features/analytics/identity-sync";
+import { ScreenTracker } from "@/features/analytics/screen-tracker";
 import { AuthProvider, useAuth } from "@/features/auth/auth-provider";
 import { PasswordGate } from "@/features/auth/password-gate";
 import { SplashController } from "@/features/auth/splash-controller";
@@ -20,14 +23,18 @@ export default function RootLayout() {
 
   return (
     // KeyboardProvider: the keyboard's height, for the screens with a text box.
-    <KeyboardProvider>
-      <ThemeProvider value={navigationThemes[scheme]}>
-        <AuthProvider>
-          <SplashController />
-          <RootNavigator />
-        </AuthProvider>
-      </ThemeProvider>
-    </KeyboardProvider>
+    <AnalyticsProvider>
+      <KeyboardProvider>
+        <ThemeProvider value={navigationThemes[scheme]}>
+          <AuthProvider>
+            <SplashController />
+            <IdentitySync />
+            <ScreenTracker />
+            <RootNavigator />
+          </AuthProvider>
+        </ThemeProvider>
+      </KeyboardProvider>
+    </AnalyticsProvider>
   );
 }
 

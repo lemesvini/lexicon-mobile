@@ -17,7 +17,8 @@ import { toDateKey } from "@/features/today/data/week";
 const ENABLED_KEY = "lexicon.daily-practice";
 const PRACTICED_KEY = "lexicon.practiced-on";
 
-const ID_PREFIX = "daily-practice-";
+/** Starts every reminder's identifier, which is how a tap on one is told apart. */
+export const DAILY_PRACTICE_PREFIX = "daily-practice-";
 const HOUR = 19;
 const DAYS_AHEAD = 7;
 
@@ -59,7 +60,7 @@ async function cancelScheduled() {
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
   await Promise.all(
     scheduled
-      .filter((request) => request.identifier.startsWith(ID_PREFIX))
+      .filter((request) => request.identifier.startsWith(DAILY_PRACTICE_PREFIX))
       .map((request) => Notifications.cancelScheduledNotificationAsync(request.identifier)),
   );
 }
@@ -80,7 +81,7 @@ export async function syncDailyPractice() {
 
     const message = MESSAGES[at.getDate() % MESSAGES.length]!;
     await Notifications.scheduleNotificationAsync({
-      identifier: ID_PREFIX + toDateKey(at),
+      identifier: DAILY_PRACTICE_PREFIX + toDateKey(at),
       content: { ...message, data: { url: "/practice" }, sound: "default" },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DATE,
@@ -96,7 +97,7 @@ export function markPracticedToday() {
   const today = toDateKey(new Date());
   write(PRACTICED_KEY, today);
   if (notificationsSupported) {
-    Notifications.cancelScheduledNotificationAsync(ID_PREFIX + today).catch(() => {});
+    Notifications.cancelScheduledNotificationAsync(DAILY_PRACTICE_PREFIX + today).catch(() => {});
   }
 }
 

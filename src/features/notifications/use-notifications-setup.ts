@@ -3,16 +3,32 @@ import { AppState } from "react-native";
 import { router, type Href } from "expo-router";
 import * as Notifications from "expo-notifications";
 
-import { syncDailyPractice } from "@/features/notifications/daily-practice";
+import { track } from "@/features/analytics/posthog";
+import { DAILY_PRACTICE_PREFIX, syncDailyPractice } from "@/features/notifications/daily-practice";
 import { getPermission } from "@/features/notifications/permissions";
 import { ensureChannels, notificationsSupported } from "@/features/notifications/setup";
 import { startNotifications } from "@/features/notifications/start";
+import type { NotificationKind } from "@/features/notifications/types/notification-kind";
+
+const SERVER_KINDS: readonly string[] = ["homework_graded", "unit_report", "class_reminder"] satisfies NotificationKind[];
+
+/** What a tapped notification was, for analytics. */
+function kindOf(request: Notifications.NotificationRequest) {
+  if (request.identifier.startsWith(DAILY_PRACTICE_PREFIX)) return "daily_practice" as const;
+  const kind = request.content.data?.kind;
+  return typeof kind === "string" && SERVER_KINDS.includes(kind) ? (kind as NotificationKind) : "other";
+}
 
 /** Opens what a tapped notification points at — its `data.url`, an app route. */
 function open(response: Notifications.NotificationResponse) {
   Notifications.clearLastNotificationResponse();
   if (response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER) return;
-  const url = response.notification.request.content.data?.url;
+  const { request } = response.notification;
+  const url = request.content.data?.url;
+  track("notification_opened", {
+    kind: kindOf(request),
+    url: typeof url === "string" ? url : null,
+  });
   if (typeof url === "string" && url.startsWith("/")) router.push(url as Href);
 }
 

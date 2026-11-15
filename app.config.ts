@@ -92,6 +92,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             color: "#61b495",
         }],
         "./plugins/withSceneLifecycle",
+        // Analytics, session replay and error tracking. Uploads the Hermes
+        // source maps on EAS Build, using the POSTHOG_CLI_* EAS env vars.
+        "posthog-react-native/expo",
         [
             "expo-splash-screen",
             {

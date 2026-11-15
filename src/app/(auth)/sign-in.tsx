@@ -49,6 +49,10 @@ export default function SignInScreen() {
 
       <KeyboardAwareScrollView
         contentInsetAdjustmentBehavior="automatic"
+        // On iOS the form is short enough to sit above the keyboard, and the
+        // native adjustment scrolls the fields up under the large title.
+        // Android still needs the controller's.
+        automaticallyAdjustKeyboardInsets={false}
         bottomOffset={KEYBOARD_GAP}
         keyboardShouldPersistTaps="handled"
         contentContainerClassName="gap-5 p-6"
@@ -66,7 +70,6 @@ export default function SignInScreen() {
           keyboardType="email-address"
           autoComplete="email"
           textContentType="username"
-          autoFocus
           returnKeyType="next"
           submitBehavior="submit"
           onSubmitEditing={() => passwordRef.current?.focus()}

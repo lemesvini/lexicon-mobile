@@ -3,6 +3,7 @@ import { ActivityIndicator, Text, View, useColorScheme } from "react-native";
 import { Stack, router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { track } from "@/features/analytics/posthog";
 import BlockView from "@/features/material/components/block-view";
 import SlidePager from "@/features/material/components/slide-pager";
 import SlideProgress from "@/features/material/components/slide-progress";
@@ -88,6 +89,7 @@ export default function StepsScreen() {
               if (last) {
                 // The material read to its end.
                 haptics.success();
+                track("lesson_material_completed", { lesson_id: lessonId, steps: slides.length });
                 router.back();
               } else {
                 haptics.tap();

@@ -241,7 +241,7 @@ function ReadingExercise({ card, stepsBefore, totalSteps, bottomInset, onDone }:
  * text missed isn't read again straight after.
  */
 export default function ReadingScreen() {
-  const session = usePracticeSession(fetchReadingCards, READING_SESSION_SIZE, false);
+  const session = usePracticeSession("reading", fetchReadingCards, READING_SESSION_SIZE, false);
   const cards = session.state.status === "ready" ? session.state.cards : [];
   const totalSteps = cards.reduce((sum, card) => sum + stepsOf(card), 0);
   const stepsBefore = cards.slice(0, session.index).reduce((sum, card) => sum + stepsOf(card), 0);

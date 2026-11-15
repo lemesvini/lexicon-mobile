@@ -85,7 +85,7 @@ function WritingExercise({ card, pool, number, total, bottomInset, onDone }: Exe
  * into English by tapping its words in order — no typing.
  */
 export default function WritingScreen() {
-  const session = usePracticeSession(fetchWritingCards);
+  const session = usePracticeSession("writing", fetchWritingCards);
 
   return (
     <ExerciseSession

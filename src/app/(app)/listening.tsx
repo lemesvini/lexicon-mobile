@@ -74,7 +74,7 @@ function ListeningExercise({ card, pool, number, total, bottomInset, onDone }: E
  * in the same sitting and again today.
  */
 export default function ListeningScreen() {
-  const session = usePracticeSession(fetchListeningCards);
+  const session = usePracticeSession("listening", fetchListeningCards);
 
   return (
     <ExerciseSession
