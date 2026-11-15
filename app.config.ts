@@ -5,7 +5,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     name: "Lexicon",
     slug: "lexicon-app",
     owner: "lemesvini",
-    version: "1.0.0",
+    version: "1.0.1",
     orientation: "portrait",
     icon: "./assets/images/app-icon-light.png",
     scheme: "lexiconmobile",
